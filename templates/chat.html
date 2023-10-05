@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Online</title>
+    <script src="https://cdn.socket.io/4.0.1/socket.io.min.js"></script>
+    <style>
+        body {
+            background-color: black;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <h1 translate="no">Zoe Chat</h1>
+    <div id="messages"></div>
+    <input type="text" id="messageInput" placeholder="Digite sua mensagem...">
+    <button onclick="sendMessage()">Enviar</button>
+
+    <script>
+        // Conectar ao servidor Socket.IO
+        const socket = io.connect('http://' + document.domain + ':' + location.port);
+
+        // Manipular mensagens recebidas do servidor
+        socket.on('message', function(data) {
+            var messages = document.getElementById('messages');
+            var messageElement = document.createElement('div');
+            messageElement.textContent = `${data.username}: ${data.message}`;
+            messages.appendChild(messageElement);
+        });
+
+        // Função para enviar mensagem ao servidor
+        function sendMessage() {
+            var messageInput = document.getElementById('messageInput');
+            var message = messageInput.value;
+            socket.emit('message', {'message': message}); // Envia a mensagem para o servidor com o objeto de dados contendo a mensagem e o nome do usuário
+            messageInput.value = ''; // Limpa o campo de entrada
+        }
+    </script>
+</body>
+
+</html>
